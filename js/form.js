@@ -1,24 +1,28 @@
 document.getElementById('weather-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const city = document.getElementById('city').value;
-    const apiKey = document.getElementById('key').value;
-  
-    try {
-      const response = await fetch(
-        `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=metric&lang=pl`
-      );
-      const data = await response.json();
-      const date = new Date();
-      const forecast = {
-        id: city + '_' + Date.now(),
-        city,
-        date,
-        data
-      };
+  e.preventDefault();
+  const city = document.getElementById('city').value;
+  const apiKey = document.getElementById('key').value;;
+  const date = new Date();
+
+  if (!navigator.serviceWorker.controller) {
+    alert('Service Worker nie jest aktywny');
+    return;
+  }
+
+  navigator.serviceWorker.controller.postMessage({
+    type: 'GET_WEATHER',
+    city,
+    apiKey
+  });
+
+  navigator.serviceWorker.addEventListener('message', (event) => {
+    if (event.data.type === 'WEATHER_SUCCESS') {
+      const { city, data } = event.data;
+      const forecast = { id: city + '_' + Date.now(), city, date, data };
       saveForecast(forecast);
       alert('Dane zapisane!');
-    } catch (err) {
-      console.error('Błąd pobierania danych pogodowych:', err);
-      alert('Nie udało się pobrać danych.');
+    } else if (event.data.type === 'WEATHER_ERROR') {
+      window.location.href = '/offline.html';
     }
   });
+});

@@ -26,16 +26,23 @@ self.addEventListener('install', function(event) {
 
 });
 
+self.addEventListener('message', async (event) => {
+  if (event.data && event.data.type === 'GET_WEATHER') {
+    const { city, apiKey } = event.data;
+    const url = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=metric&lang=pl`;
+
+    try {
+      const response = await fetch(url);
+      const data = await response.json();
+
+      event.source.postMessage({ type: 'WEATHER_SUCCESS', city, data });
+    } catch (err) {
+      event.source.postMessage({ type: 'WEATHER_ERROR' });
+    }
+  }
+});
+
 self.addEventListener('fetch', event => {
-  if (event.request.url.includes('api.openweathermap.org')) {
-    event.respondWith(
-      fetch(event.request)
-        .then(res => {
-          return res;
-        })
-        .catch(() => caches.match('/offline.html'))
-    );
-  } else {
     event.respondWith(
 
         caches.match(event.request).then(function(response) {
@@ -45,5 +52,4 @@ self.addEventListener('fetch', event => {
         })
 
     );
-  }
 });
