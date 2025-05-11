@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wybór lokalizacji</title>
+</head>
+<body>
+  <h1>Wybierz lokalizację</h1>
+  <form id="weather-form">
+    <label for="key">Open Weather ApiKey:</label>
+    <input type="text" id="key" name="key" required>
+    <label for="city">Miasto:</label>
+    <input type="text" id="city" name="city" required>
+
+    <button type="submit">Pobierz prognozę</button>
+  </form>
+  <a href="index.html">Powrót</a>
+  <a href="weather.html">Zobacz zapisane dane</a>
+  <script src="js/db.js"></script>
+  <script src="js/form.js"></script>
+  <script src="js/index.js"></script>
+</body>
+</html>
